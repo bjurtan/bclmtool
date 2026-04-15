@@ -1,6 +1,8 @@
 # bclmtool
 
-A lightweight C utility for Linux to control the Battery Charge Level Max (BCLM) and Battery Full charge Level (BFCL) on Intel-based MacBooks. This tool uses the same SMC handshaking pattern as the maintained Linux applesmc driver. It polls the command port status bits, waits for the expected busy/input-buffer transitions, and flushes unread data before completing read transactions. When writing a new charge limit it updates the BCLM key and also updates BFCL for the charger LED threshold by communicating directly with the Apple System Management Controller (SMC) via I/O ports.
+Simple tool for Linux to control the Battery Charge Level Max (BCLM) and Battery Full charge Level (BFCL) on Intel-based MacBooks.
+
+This tool uses the same SMC handshaking pattern as the maintained Linux applesmc driver. It polls the command port status bits, waits for the expected busy/input-buffer transitions, and flushes unread data before completing read transactions. When writing a new charge limit it updates the BCLM key and also updates BFCL for the charger LED threshold by communicating directly with the Apple System Management Controller (SMC) via I/O ports.
 
 ## Why this exists
 Standard Linux drivers for older MacBooks often lack the sysfs interface to set battery charge thresholds. This tool fills that gap by writing directly to the BCLM register.
