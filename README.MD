@@ -45,7 +45,7 @@ SMC keys are four-character identifiers. The keys used here are both ui8 values,
 When you run sudo ./bclmtool 80, the tool:
 1. Reads the current BCLM
 2. Writes BCLM = 80
-3. Writes BFCL = 79
+3. Writes BFCL = 78
 4. Reads both keys back for verification
 
 The SMC command/status port exposes three status bits that matter for this handshake:

@@ -203,7 +203,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int full_target = target - 1;
+    /* BFCL should be set to two percentage point below BCLM target as per
+     * applesmc-next mainteiners recommendations to prevent contant gate
+     * flicker in the SMC and consisten green MagSafe indicato LED when in
+     * the "full range". */
+    int full_target = target - 2;
 
     printf("Setting BCLM from %d%% to %d%%...\n", current == 0 ? 100 : current, target);
     if (write_bclm((uint8_t)target) != 0) {
