@@ -26,7 +26,15 @@
 #define SMC_STATUS_IB_CLOSED     0x02
 #define SMC_STATUS_BUSY          0x04
 
+/* BCLM should be set to the percantage of full capacity at which the charging
+ * should stop. */
 static const char BCLM_KEY[] = "BCLM";
+
+/* BFCL should be set to two percentage point below BCLM target as per
+ * applesmc-next mainteiners recommendations to prevent constant gate
+ * flicker in the SMC and consisten green MagSafe indicato LED when in
+ * the "full range". My tests show inconclusive results and the conclusion
+ * is that the BFCL behaviour is not well understood.*/
 static const char BFCL_KEY[] = "BFCL";
 
 /* Wait for a specific status/mask combination on the SMC command port. */
@@ -203,41 +211,21 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    /* BFCL should be set to two percentage point below BCLM target as per
-     * applesmc-next mainteiners recommendations to prevent contant gate
-     * flicker in the SMC and consisten green MagSafe indicato LED when in
-     * the "full range". */
-    int full_target = target - 2;
-
     printf("Setting BCLM from %d%% to %d%%...\n", current == 0 ? 100 : current, target);
     if (write_bclm((uint8_t)target) != 0) {
         fprintf(stderr, "Failed to write BCLM to SMC.\n");
         return 1;
     }
 
-    if (write_bfcl((uint8_t)full_target) != 0) {
-        fprintf(stderr, "Warning: BCLM was updated, but failed to set BFCL to %d%%.\n",
-                full_target);
-    }
-
     /* Verification read */
     uint8_t verify_bclm;
-    uint8_t verify_bfcl;
+    /* uint8_t verify_bfcl; */
     usleep(50000); 
     if (read_bclm(&verify_bclm) != 0) {
         fprintf(stderr, "Failed to verify BCLM after write.\n");
         return 1;
     }
 
-    if (read_bfcl(&verify_bfcl) != 0) {
-        fprintf(stderr, "Verification: BCLM is %d%%, but BFCL could not be read.\n",
-                verify_bclm == 0 ? 100 : verify_bclm);
-        return 0;
-    }
-
-    printf("Verification: SMC now reports BCLM=%d%%, BFCL=%d%%\n",
-           verify_bclm == 0 ? 100 : verify_bclm,
-           verify_bfcl == 0 ? 100 : verify_bfcl);
-
+    printf("Verification: SMC now reports BCLM=%d%%\n", verify_bclm == 0 ? 100 : verify_bclm);
     return 0;
 }

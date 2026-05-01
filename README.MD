@@ -1,8 +1,8 @@
 # bclmtool
 
-Simple tool for Linux to control the Battery Charge Level Max (BCLM) and Battery Full charge Level (BFCL) on Intel-based MacBooks.
+Simple tool for Linux to control the Battery Charge Level Max (BCLM) on Intel-based MacBooks.
 
-This tool uses the same SMC handshaking pattern as the maintained Linux applesmc driver. It polls the command port status bits, waits for the expected busy/input-buffer transitions, and flushes unread data before completing read transactions. When writing a new charge limit it updates the BCLM key and also updates BFCL for the charger LED threshold by communicating directly with the Apple System Management Controller (SMC) via I/O ports.
+This tool uses the same SMC handshaking pattern as the maintained Linux applesmc driver. It polls the command port status bits, waits for the expected busy/input-buffer transitions, and flushes unread data before completing read transactions. When writing a new charge limit it updates the BCLM key Battery Charge Level Maximum threshold by communicating directly with the Apple System Management Controller (SMC) via I/O ports.
 
 ## Why this exists
 Standard Linux drivers for older MacBooks often lack the sysfs interface to set battery charge thresholds. This tool fills that gap by writing directly to the BCLM register.
@@ -40,13 +40,11 @@ SMC keys are four-character identifiers. The keys used here are both ui8 values,
 | Key | Type | Meaning |
 | --- | --- | --- |
 | BCLM | ui8 | Battery Charge Level Max, the charge stop threshold |
-| BFCL | ui8 | Battery Full Charge Level, used here as the charger LED threshold |
 
 When you run sudo ./bclmtool 80, the tool:
 1. Reads the current BCLM
 2. Writes BCLM = 80
-3. Writes BFCL = 78
-4. Reads both keys back for verification
+4. Reads BCLM key back for verification
 
 The SMC command/status port exposes three status bits that matter for this handshake:
 - bit 0 (0x01): data is waiting to be read
